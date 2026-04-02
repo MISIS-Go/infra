@@ -1,0 +1,45 @@
+global:
+  imagePullPolicy: IfNotPresent
+  imageRegistry: ghcr.io/your-org/bezum
+  imageTag: latest
+  host: ""
+
+flags:
+  JWT_SECRET: replace-me
+  AUTH_COOKIE: bezum_jwt
+  PUBLIC_FLAG_TEXT: absolute cinema
+  HINT_PUBLIC_FLAG: public route found, real chain starts elsewhere
+  HINT_NOTES_RENDER: raw HTML survives the notes renderer
+  HINT_GAMES_CHAIN: arcade hints mention the note pipeline
+  FLAG_AUTH_ADMIN: flag{replace-me}
+  FLAG_NOTES_XSS: flag{replace-me}
+  FLAG_CHAT_HIDDEN: flag{replace-me}
+  FLAG_INTERNAL_MEMORY: flag{replace-me}
+  FLAG_BANK_SSRF: flag{replace-me}
+  FLAG_CHAIN_FINAL: flag{replace-me}
+
+services:
+  frontend:
+    port: 8000
+    public: true
+  backend:
+    port: 8001
+    public: true
+  auth:
+    port: 8002
+    public: true
+  bank:
+    port: 8003
+    public: false
+  notes:
+    port: 8004
+    public: false
+  inmemory:
+    port: 8005
+    public: false
+  games:
+    port: 8006
+    public: false
+  chat:
+    port: 8007
+    public: true

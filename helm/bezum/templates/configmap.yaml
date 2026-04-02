@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: bezum-config
+data:
+  BACKEND_URL: http://bezum-backend:8001
+  AUTH_URL: http://bezum-auth:8002
+  BANK_URL: http://bezum-bank:8003
+  NOTES_URL: http://bezum-notes:8004
+  MEMORY_URL: http://bezum-inmemory:8005
+  GAMES_URL: http://bezum-games:8006
+  CHAT_URL: http://bezum-chat:8007
+  PUBLIC_BACKEND_WS_PATH: /ws/chat
+  PUBLIC_CHAT_WS_PATH: /chat/ws/chat

@@ -1,0 +1,13 @@
+global:
+  imageRegistry: ghcr.io/your-org/bezum
+  imageTag: dev
+
+services:
+  frontend:
+    public: true
+  backend:
+    public: true
+  auth:
+    public: true
+  chat:
+    public: true

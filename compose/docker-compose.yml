@@ -1,0 +1,125 @@
+services:
+  inmemory:
+    build:
+      context: ../..
+      dockerfile: InMemory/Dockerfile
+    env_file:
+      - ../env/generated/runtime.env
+      - ../env/generated/flags.env
+    environment:
+      FLAGS_FILE: "/runtime-generated/flags.env"
+    container_name: bezum-inmemory
+    volumes:
+      - ../env/generated:/runtime-generated
+    ports:
+      - "${HOST_MEMORY_PORT:-18005}:8005"
+
+  auth:
+    build:
+      context: ../..
+      dockerfile: auth/Dockerfile
+    env_file:
+      - ../env/generated/runtime.env
+      - ../env/generated/flags.env
+    depends_on:
+      - inmemory
+    container_name: bezum-auth
+    ports:
+      - "${HOST_AUTH_PORT:-18002}:8002"
+
+  notes:
+    build:
+      context: ../..
+      dockerfile: notes/Dockerfile
+    env_file:
+      - ../env/generated/runtime.env
+      - ../env/generated/flags.env
+    depends_on:
+      - inmemory
+      - auth
+    container_name: bezum-notes
+    ports:
+      - "${HOST_NOTES_PORT:-18004}:8004"
+
+  bank:
+    build:
+      context: ../..
+      dockerfile: bank/Dockerfile
+    env_file:
+      - ../env/generated/runtime.env
+      - ../env/generated/flags.env
+    depends_on:
+      - inmemory
+      - auth
+    container_name: bezum-bank
+    ports:
+      - "${HOST_BANK_PORT:-18003}:8003"
+
+  chat:
+    build:
+      context: ../..
+      dockerfile: chat/Dockerfile
+    env_file:
+      - ../env/generated/runtime.env
+      - ../env/generated/flags.env
+    depends_on:
+      - auth
+    container_name: bezum-chat
+    ports:
+      - "${HOST_CHAT_PORT:-18007}:8007"
+
+  games:
+    build:
+      context: ../..
+      dockerfile: games/Dockerfile
+    env_file:
+      - ../env/generated/runtime.env
+      - ../env/generated/flags.env
+    depends_on:
+      - auth
+    container_name: bezum-games
+    ports:
+      - "${HOST_GAMES_PORT:-18006}:8006"
+
+  backend:
+    build:
+      context: ../..
+      dockerfile: backend/Dockerfile
+    env_file:
+      - ../env/generated/runtime.env
+      - ../env/generated/flags.env
+    environment:
+      FLAGS_FILE: "/runtime-generated/flags.env"
+    volumes:
+      - ../env/generated:/runtime-generated
+    depends_on:
+      - auth
+      - bank
+      - chat
+      - notes
+      - games
+    ports:
+      - "${HOST_BACKEND_PORT:-18001}:8001"
+    container_name: bezum-backend
+
+  frontend:
+    build:
+      context: ../..
+      dockerfile: frontend/Dockerfile
+    env_file:
+      - ../env/generated/runtime.env
+      - ../env/generated/flags.env
+    environment:
+      FRONTEND_AUTH_URL: "http://auth:8002"
+      FRONTEND_BACKEND_URL: "http://backend:8001"
+      FRONTEND_CHAT_URL: "http://chat:8007"
+    depends_on:
+      - backend
+      - auth
+      - bank
+      - chat
+      - notes
+      - games
+    ports:
+      - "${HOST_FRONTEND_PORT:-18000}:8000"
+    container_name: bezum-frontend

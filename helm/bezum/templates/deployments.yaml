@@ -1,0 +1,43 @@
+{{- range $name, $svc := .Values.services }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bezum-{{ $name }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bezum-{{ $name }}
+  template:
+    metadata:
+      labels:
+        app: bezum-{{ $name }}
+    spec:
+      containers:
+        - name: {{ $name }}
+          image: {{ $.Values.global.imageRegistry }}/{{ $name }}:{{ $.Values.global.imageTag }}
+          imagePullPolicy: {{ $.Values.global.imagePullPolicy }}
+          envFrom:
+            - configMapRef:
+                name: bezum-config
+            - secretRef:
+                name: bezum-secrets
+          ports:
+            - containerPort: {{ $svc.port }}
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: {{ $svc.port }}
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: {{ $svc.port }}
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
+---
+{{- end }}
